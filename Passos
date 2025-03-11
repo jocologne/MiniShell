@@ -1,0 +1,96 @@
+1. Exibir o Prompt de Comando
+
+    Exiba o prompt ($) aguardando a entrada do usuário.
+    Utilize a função readline() para capturar a entrada do usuário.
+    Armazene o comando no histórico utilizando add_history().
+
+2. Histórico de Comandos
+
+    Armazene os comandos digitados pelo usuário.
+    Use a função add_history() do readline para gerenciar o histórico.
+    Permita navegação no histórico (setas para cima/baixo).
+
+3. Manipulação de Sinais
+
+    Configure o manipulador de sinais para SIGINT (Ctrl+C), SIGQUIT (Ctrl+) e SIGTERM (Ctrl+D).
+    Ctrl+C: Exibe um novo prompt, mas não termina o shell.
+    Ctrl+D: Finaliza o shell.
+    **Ctrl+**: Não faz nada.
+    Use signal() ou sigaction() para configurar os sinais.
+
+4. Expansão de Variáveis de Ambiente
+
+    Use getenv() para expandir variáveis de ambiente, como $HOME, $PATH, $USER, etc.
+    Substitua variáveis como $HOME pelo seu valor real antes de executar o comando.
+
+5. Interpretar e Executar Comandos
+
+    Para comandos internos (como cd, pwd, exit, etc.), implemente funções específicas.
+    Para comandos externos, use fork() para criar um processo filho e execve() para executar o comando.
+    O processo pai deve esperar o processo filho terminar com wait().
+
+6. Redirecionamento de Entrada e Saída
+
+    > (saída): Use open(), dup2(), e close() para redirecionar a saída para um arquivo.
+    < (entrada): Use open() e dup2() para redirecionar a entrada de um arquivo.
+    >> (anexar saída): Redireciona a saída para o final de um arquivo.
+    << (Here Document): Redireciona a entrada até encontrar um delimitador, mas não atualiza o histórico.
+
+7. Pipes (|)
+
+    Crie um pipe com pipe().
+    Use dup2() para redirecionar a saída de um comando para o pipe e a entrada do próximo comando para o pipe.
+    Crie processos filhos com fork() para executar os comandos antes e depois do pipe.
+
+8. Implementação de Comandos Internos (Built-ins)
+
+    echo: Imprime uma string, com a opção -n para não adicionar uma nova linha.
+    cd: Altera o diretório com chdir().
+    pwd: Exibe o diretório atual com getcwd().
+    export: Exibe as variáveis de ambiente.
+    unset: Remove uma variável de ambiente com unsetenv().
+    env: Exibe as variáveis de ambiente.
+    exit: Finaliza o shell. Retorna um código de saída.
+
+9. Comando exit e Controle de Saída
+
+    O comando exit encerra o shell.
+    Se fornecido um código de saída (ex: exit 42), o shell deve terminar com esse código.
+    Use exit() para terminar o processo principal.
+
+10. Manipulação de Comandos com Aspas
+
+    Aspas Simples ('): Ignora os metacaracteres dentro das aspas simples.
+    Aspas Duplas ("): Ignora os metacaracteres, exceto o caractere $ (para expansão de variáveis).
+    Implemente um parser para lidar com a interpretação de aspas e expansão de variáveis.
+
+11. Funções Permitidas
+
+    Certifique-se de usar somente as funções permitidas na lista fornecida:
+        Funções como fork(), execve(), wait(), chdir(), getenv(), etc.
+        Manipulação de arquivos: open(), read(), write(), close(), dup2().
+        Funções de sinal: signal(), sigaction().
+
+12. Testar e Depurar
+
+    Teste o minishell com comandos básicos e redirecionamentos.
+    Teste a execução de pipelines e expansão de variáveis.
+    Certifique-se de que o shell lida corretamente com sinais como Ctrl+C, Ctrl+D, e Ctrl+\.
+
+13. Tratar Erros e Comandos Inválidos
+
+    Trate os erros adequadamente, exibindo mensagens de erro com perror() ou strerror().
+    Se o comando não for encontrado, imprima uma mensagem de erro.
+    Caso um comando interno falhe (como cd ou echo), exiba uma mensagem apropriada.
+
+Estrutura Geral do Loop do Shell:
+
+    Exiba o prompt.
+    Leia a entrada com readline().
+    Processar a entrada (interprete comandos internos e externos).
+    Execute o comando (interno ou externo).
+    Redirecione entradas e saídas conforme necessário.
+    Trate sinais e interaja com o usuário.
+    Repita até o usuário sair (exit).
+
+Essa abordagem modular ajudará a organizar seu código de forma que você possa implementar cada funcionalidade de maneira eficiente e clara.
