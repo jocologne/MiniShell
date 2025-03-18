@@ -6,7 +6,7 @@
 /*   By: jcologne <jcologne@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/11 15:43:31 by jcologne          #+#    #+#             */
-/*   Updated: 2025/03/12 20:15:31 by jcologne         ###   ########.fr       */
+/*   Updated: 2025/03/17 22:06:13 by jcologne         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -76,10 +76,10 @@ int	main(void)
 			else if (pid == 0)
 			{
 				// Processo filho
-				path = find_path(args[0]);
+				path = get_cmd_path(args[0]);
 				if (!path)
 				{
-					fprintf(stderr, "Command not found: %s\n", args[0]);
+					printf("Command not found: %s\n", args[0]);
 					free_args(args);
 					free(input);
 					exit(EXIT_FAILURE);

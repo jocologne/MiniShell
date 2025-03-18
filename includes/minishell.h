@@ -6,7 +6,7 @@
 /*   By: jcologne <jcologne@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/11 17:18:18 by jcologne          #+#    #+#             */
-/*   Updated: 2025/03/13 15:46:36 by jcologne         ###   ########.fr       */
+/*   Updated: 2025/03/17 22:04:10 by jcologne         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,7 +27,8 @@
 # include <readline/history.h>
 
 //INPUT
-char	*find_path(char *cmd);
+void    handle_error(char *message);
+char	*get_cmd_path(char *cmd);
 
 //BUILTIN
 int		is_builtin(char **args);

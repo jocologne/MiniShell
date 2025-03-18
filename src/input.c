@@ -6,33 +6,39 @@
 /*   By: jcologne <jcologne@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/11 17:44:29 by jcologne          #+#    #+#             */
-/*   Updated: 2025/03/11 19:26:48 by jcologne         ###   ########.fr       */
+/*   Updated: 2025/03/17 22:04:15 by jcologne         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-char *find_path(char *cmd)
+void    handle_error(char *message)
 {
-    char *path = getenv("PATH"); 
-    char *path_copy = ft_strdup(path); 
-    char *dir = strtok(path_copy, ":");
+    perror(message);
+    exit(EXIT_FAILURE);
+}
 
-    while (dir)
+char    *get_cmd_path(char *cmd)
+{
+    char  **paths;
+    char  *path;
+    int      i;
+    paths = ft_split(getenv("PATH"), ':');
+    if (!paths)
+        handle_error("Error splitting PATH");
+    i = 0;
+    while (paths[i])
     {
-        char *full_path = malloc(ft_strlen(dir) + ft_strlen(cmd) + 2);
-        sprintf(full_path, "%s/%s", dir, cmd);
-
-        if (access(full_path, X_OK) == 0)
+        path = ft_strjoin(paths[i], "/");
+        path = ft_strjoin(path, cmd);
+        if (access(path, X_OK) == 0)
         {
-            free(path_copy);
-            return full_path;
+            free(paths);
+            return (path);
         }
-        
-        free(full_path);
-        dir = strtok(NULL, ":");
+        free(path);
+        i++;
     }
-
-    free(path_copy);
-    return NULL;
+    free(paths);
+    return (NULL);
 }
