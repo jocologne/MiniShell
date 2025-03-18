@@ -38,4 +38,10 @@ fclean: clean
 
 re: fclean all
 
+run: all
+	@./$(TARGET)
+
+rerun: re
+	@./$(TARGET)
+
 .PHONY: all clean fclean re

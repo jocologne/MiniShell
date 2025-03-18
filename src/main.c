@@ -6,18 +6,32 @@
 /*   By: jcologne <jcologne@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/11 15:43:31 by jcologne          #+#    #+#             */
-/*   Updated: 2025/03/11 19:08:24 by jcologne         ###   ########.fr       */
+/*   Updated: 2025/03/12 20:15:31 by jcologne         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
+
+void free_args(char **args)
+{
+	int i;
+	
+	if (!args)
+		return;
+	i = 0;
+	while (args[i])
+	{
+		free(args[i]);
+		i++;
+	}
+	free(args);
+}
 
 int	main(void)
 {
 	char	*input;
 	char	**args;
 	int 	pid;
-	int		status;
 	char 	*path;
 
 	while (1)
@@ -26,23 +40,68 @@ int	main(void)
 		if (!input)
 		{
 			printf("exit\n");
-			break ;
+			break;
 		}
 		add_history(input);
 		args = ft_split(input, 32);
-		pid = fork();
-		if (pid == 0)
+		if (!args)
 		{
-			path = find_path(args[0]);
-			if (execve(path, args, NULL) == -1)
-				perror("Error");
-			exit(EXIT_FAILURE);
+			free(input);
+			continue;
+		}
+		
+		if (args[0] == NULL)
+		{
+			free_args(args);
+			free(input);
+			continue;
+		}
+		
+		if (is_builtin(args))
+		{
+			// A função builtin deve lidar com a limpeza dos argumentos
+			free(input);
+			continue;
 		}
 		else
 		{
-			wait(&status);
+			pid = fork();
+			if (pid == -1)
+			{
+				perror("fork");
+				free_args(args);
+				free(input);
+				continue;
+			}
+			else if (pid == 0)
+			{
+				// Processo filho
+				path = find_path(args[0]);
+				if (!path)
+				{
+					fprintf(stderr, "Command not found: %s\n", args[0]);
+					free_args(args);
+					free(input);
+					exit(EXIT_FAILURE);
+				}
+				// Executa o comando
+				if (execve(path, args, NULL) == -1)
+				{
+					perror("Error");
+					free(path);
+					free_args(args);
+					free(input);
+					exit(EXIT_FAILURE);
+				}
+			}
+			else
+			{
+				// Processo pai
+				waitpid(pid, NULL, 0);
+				free_args(args);
+				free(input);
+			}
 		}
-		free(input);
 	}
 	return (0);
 }
